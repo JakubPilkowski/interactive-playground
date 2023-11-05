@@ -1,0 +1,23 @@
+.box {
+  /* display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+  padding: 20px;
+  border-radius: 20px;
+  background-color: gray;
+  outline: none;
+
+  * {
+    position: relative !important;
+  } */
+  width: 100%;
+  pointer-events: none;
+}
+
+input {
+  background-color: black;
+  color: white;
+  caret-color: white;
+  padding: 0.5em;
+}

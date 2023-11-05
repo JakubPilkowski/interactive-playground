@@ -1,0 +1,15 @@
+.panel {
+  position: fixed !important;
+  top: 20px;
+  right: 20px;
+  background-color: gray;
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  z-index: 9999999;
+}
+
+button {
+  padding: 10px 30px;
+}
