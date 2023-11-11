@@ -54,6 +54,13 @@ export default class Connection {
     return this;
   }
 
+  disconnect(): this {
+    this.target = null;
+    this.source = null;
+    this.updateState();
+    return this;
+  }
+
   clone(): Connection {
     return new Connection(this);
   }
