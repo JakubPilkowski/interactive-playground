@@ -1,8 +1,12 @@
-import { Suspense, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import tunnel from "tunnel-rat";
 import { Canvas } from "@react-three/fiber";
 import { Grid, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
+
+import { useAppDispatch } from "./app/store";
+import { setModeByShortcut } from "./features/playground/playgroundSlice";
+
 import Controller from "./Controller";
 import Renderer from "./Renderer";
 import Panel from "./Panel";
@@ -11,10 +15,23 @@ const ui = tunnel();
 
 function App() {
   const container = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch();
   // var w = container.current?.clientWidth;
   // var h = container.current?.clientHeight;
   // var viewSize = h;
   // var aspectRatio = w / h;
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      dispatch(setModeByShortcut({ key: e.key }));
+    };
+
+    document.addEventListener("keydown", onKeyDown, true);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [dispatch]);
 
   return (
     <Suspense fallback={<p>Ładowanie</p>}>
@@ -75,9 +92,9 @@ function App() {
             // args={[2, 2]}
           />
           <Controller>
-            {(onAdd, onMove) => (
+            {({ onAdd, onMove, onModeSet }) => (
               <ui.In>
-                <Panel onAdd={onAdd} onMove={onMove} />
+                <Panel onAdd={onAdd} onMove={onMove} onModeSet={onModeSet} />
               </ui.In>
             )}
           </Controller>

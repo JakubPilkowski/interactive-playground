@@ -19,6 +19,7 @@ import {
 import { INode, move } from "./features/nodes/nodeSlice";
 
 import "./box.css";
+import { useAppSelector } from "./app/store";
 
 function getBoundaries(group: Object3D, origin: Mesh): Box3[] {
   const objectsBoundaries: Box3[] = [];
@@ -54,6 +55,8 @@ const Box: FC<IProps> = ({ node }) => {
   const { size, viewport } = useThree();
   const controls = useThree((state) => state.controls);
   const scene = useThree((state) => state.scene);
+
+  const currentMode = useAppSelector((state) => state.playground.currentMode);
 
   const dispatch = useDispatch();
 
@@ -400,6 +403,10 @@ const Box: FC<IProps> = ({ node }) => {
           return [startX, startY];
         },
       },
+      enabled:
+        typeof currentMode.movement.nodes === "boolean"
+          ? currentMode.movement.nodes
+          : true,
     }
   );
 
