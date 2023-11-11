@@ -1,24 +1,25 @@
 import { FC, memo } from "react";
+import clsx from "clsx";
+
 import { useAppSelector } from "./app/store";
 
 import { INode } from "./features/nodes/nodeSlice";
+import { IMode } from "./features/playground/Playground";
 
 import "./controller.css";
 
-export type MoveToNodeEventHandler = (node: INode) => void;
+import "./panel.css";
 
-export type AddNodeEventHandler = () => void;
-
-interface IProps {
-  onAdd: AddNodeEventHandler;
-  onMove: MoveToNodeEventHandler;
-}
-
-const Panel: FC<IProps> = ({ onAdd, onMove }) => {
+const Panel: FC<IProps> = ({ onAdd, onMove, onModeSet }) => {
   const nodes = useAppSelector((state) => state.nodes);
+  const playground = useAppSelector((state) => state.playground);
 
   const handleMove = (node: INode) => () => {
     onMove(node);
+  };
+
+  const handleModeSet = (mode: IMode) => () => {
+    onModeSet(mode);
   };
 
   return (
@@ -30,8 +31,33 @@ const Panel: FC<IProps> = ({ onAdd, onMove }) => {
           Move to {node.id}
         </button>
       ))}
+      <hr />
+      <section>
+        {playground.modes.map((mode) => (
+          <button
+            onClick={handleModeSet(mode)}
+            className={clsx("mode-button", {
+              active: mode.name === playground.currentMode.name,
+            })}
+          >
+            {mode.name}
+          </button>
+        ))}
+      </section>
     </div>
   );
 };
 
 export default memo(Panel);
+
+interface IProps {
+  onAdd: AddNodeEventHandler;
+  onMove: MoveToNodeEventHandler;
+  onModeSet: SetModeEventHandler;
+}
+
+export type MoveToNodeEventHandler = (node: INode) => void;
+
+export type AddNodeEventHandler = () => void;
+
+export type SetModeEventHandler = (mode: IMode) => void;

@@ -4,17 +4,24 @@ import { Html } from "@react-three/drei";
 import { Vector3 } from "three";
 
 import { useAppDispatch } from "./app/store";
-import { add } from "./features/nodes/nodeSlice";
 
-import { AddNodeEventHandler, MoveToNodeEventHandler } from "./Panel";
+import { add } from "./features/nodes/nodeSlice";
+import { setMode } from "./features/playground/playgroundSlice";
+
+import {
+  AddNodeEventHandler,
+  MoveToNodeEventHandler,
+  SetModeEventHandler,
+} from "./Panel";
 
 import "./controller.css";
 
 interface IProps {
-  children: (
-    onAdd: AddNodeEventHandler,
-    onMove: MoveToNodeEventHandler
-  ) => ReactNode;
+  children: (callbacks: {
+    onAdd: AddNodeEventHandler;
+    onMove: MoveToNodeEventHandler;
+    onModeSet: SetModeEventHandler;
+  }) => ReactNode;
 }
 
 const Controller: FC<IProps> = ({ children }) => {
@@ -37,9 +44,13 @@ const Controller: FC<IProps> = ({ children }) => {
     controls.update();
   };
 
+  const onModeSet: SetModeEventHandler = (mode) => {
+    dispatch(setMode({ mode }));
+  };
+
   return (
     <Html prepend wrapperClass="panel">
-      {children(onAdd, onMove)}
+      {children({ onAdd, onMove, onModeSet })}
       {/* <button onClick={addButton}>Add new box</button>
       <div>
         <p>Move to</p>
