@@ -35,6 +35,7 @@ const Panel: FC<IProps> = ({ onAdd, onMove, onModeSet }) => {
       <section>
         {playground.modes.map((mode) => (
           <button
+            key={mode.name}
             onClick={handleModeSet(mode)}
             className={clsx("mode-button", {
               active: mode.name === playground.currentMode.name,

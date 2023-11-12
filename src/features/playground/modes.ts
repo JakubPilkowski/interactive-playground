@@ -1,21 +1,28 @@
-import { IMode } from "./Playground";
+import { ConnectionType, IMode, ModeType } from "./Playground";
 
 export const moveMode: IMode = {
-  name: "move",
+  type: "move",
+  name: ModeType.move,
   shortcut: "m",
   movement: {
     connections: false,
     nodes: true,
     playground: true,
   },
+  isChangeDisabled: false,
 };
 
 export const connectionMode: IMode = {
-  name: "connection",
+  type: "connection",
+  name: ModeType.connection,
   shortcut: "c",
   movement: {
     connections: true,
     nodes: false,
-    playground: true,
+    playground: false,
+  },
+  isChangeDisabled: false,
+  connectionState: {
+    type: ConnectionType.IDLE,
   },
 };

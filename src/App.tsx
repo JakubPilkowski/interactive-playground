@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { Grid, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
 
-import { useAppDispatch } from "./app/store";
+import { useAppDispatch, useAppSelector } from "./app/store";
 import { setModeByShortcut } from "./features/playground/playgroundSlice";
 
 import Controller from "./Controller";
@@ -16,6 +16,7 @@ const ui = tunnel();
 function App() {
   const container = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
+  const currentMode = useAppSelector((state) => state.playground.currentMode);
   // var w = container.current?.clientWidth;
   // var h = container.current?.clientHeight;
   // var viewSize = h;
@@ -71,6 +72,7 @@ function App() {
             zoomToCursor
             maxPolarAngle={Math.PI / 2}
             minPolarAngle={Math.PI / 2}
+            enabled={currentMode.movement.playground}
             mouseButtons={{
               LEFT: THREE.MOUSE.PAN,
               // LEFT: THREE.MOUSE.ROTATE,

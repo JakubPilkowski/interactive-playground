@@ -2,10 +2,10 @@ import { FC, useCallback, useRef } from "react";
 import { BufferGeometry, Line } from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 
-import Connection, { ConnectionState } from "./features/connection/Connection";
+import { ConnectionState, IConnection } from "./features/connection/Connection";
 
 interface IProps {
-  connection: Connection;
+  connection: IConnection;
 }
 
 const ConnectionLine: FC<IProps> = ({ connection }) => {

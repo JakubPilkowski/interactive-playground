@@ -61,6 +61,15 @@ export default class Connection {
     return this;
   }
 
+  unparse(): IConnection {
+    return {
+      id: this.id,
+      source: this.source,
+      target: this.target,
+      state: this.state,
+    };
+  }
+
   clone(): Connection {
     return new Connection(this);
   }
@@ -96,6 +105,7 @@ export const ConnectionState = {
 export type IConnectionState = keyof typeof ConnectionState;
 
 export interface IConnection {
+  id: string;
   state: IConnectionState;
   source: string | null;
   target: string | null;
