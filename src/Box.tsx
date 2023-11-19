@@ -4,7 +4,6 @@ import { useSpring, a } from "@react-spring/three";
 import { useDispatch } from "react-redux";
 import { Html } from "@react-three/drei";
 import { useGesture } from "@use-gesture/react";
-
 import {
   Box3,
   BufferGeometry,
@@ -16,10 +15,11 @@ import {
   Vector3,
 } from "three";
 
+import { useAppSelector } from "./app/store";
+
 import { INode, move } from "./features/nodes/nodeSlice";
 
 import "./box.css";
-import { useAppSelector } from "./app/store";
 
 function getBoundaries(group: Object3D, origin: Mesh): Box3[] {
   const objectsBoundaries: Box3[] = [];

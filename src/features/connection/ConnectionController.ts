@@ -71,6 +71,10 @@ export default class ConnectionController {
 
   // TODO: add findAnchorType(point, anchorId)
 
+  /**
+   * @param point normalized pointer position
+   * @returns find anchor object using raycaster
+   */
   findAnchorObjectByPoint(point: Vector2): Object3D<Object3DEventMap> | null {
     const nodes = this.getNodes();
     if (nodes.length === 0) {
@@ -168,7 +172,8 @@ export default class ConnectionController {
   }
 
   clone(): ConnectionController {
-    const { sourceAnchor, targetAnchor, camera, scene, _connection } = this;
+    const { sourceAnchor, targetAnchor, camera, _state, scene, _connection } =
+      this;
 
     const clone = new ConnectionController(
       scene,
@@ -182,6 +187,8 @@ export default class ConnectionController {
     if (targetAnchor) {
       clone.setTargetAnchor(targetAnchor);
     }
+
+    clone.setState(_state);
 
     return clone;
   }

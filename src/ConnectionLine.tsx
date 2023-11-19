@@ -1,5 +1,5 @@
 import { FC, useCallback, useRef } from "react";
-import { BufferGeometry, Line } from "three";
+import { Line } from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 
 import { ConnectionState, IConnection } from "./features/connection/Connection";
@@ -11,7 +11,7 @@ interface IProps {
 const ConnectionLine: FC<IProps> = ({ connection }) => {
   const scene = useThree((state) => state.scene);
 
-  const ref = useRef<Line<BufferGeometry>>(null);
+  const ref = useRef<Line>(null);
 
   const updatePosition = useCallback(() => {
     const { source, target, state } = connection;
@@ -31,10 +31,10 @@ const ConnectionLine: FC<IProps> = ({ connection }) => {
 
   return (
     // TODO: add anchors
-    <line ref={ref}>
+    <threeLine ref={ref}>
       <bufferGeometry />
       <lineBasicMaterial color="orange" linewidth={5} />
-    </line>
+    </threeLine>
   );
 };
 

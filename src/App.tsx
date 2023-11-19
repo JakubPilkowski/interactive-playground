@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useRef } from "react";
 import tunnel from "tunnel-rat";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, extend } from "@react-three/fiber";
 import { Grid, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -10,6 +10,8 @@ import { setModeByShortcut } from "./features/playground/playgroundSlice";
 import Controller from "./Controller";
 import Renderer from "./Renderer";
 import Panel from "./Panel";
+
+extend({ ThreeLine: THREE.Line });
 
 const ui = tunnel();
 
