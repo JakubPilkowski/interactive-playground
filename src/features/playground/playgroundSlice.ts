@@ -2,26 +2,23 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { connectionMode, moveMode } from "./modes";
 
-import { IMode, IPlayground } from "./Playground";
+import { IConnectionState, IMode, IPlayground, ModeType } from "./Playground";
 
 const playgroundSlice = createSlice({
   initialState: {
     modes: [moveMode, connectionMode],
-    currentMode: {
-      ...moveMode,
-      isChangeDisabled: false,
-    },
+    currentMode: moveMode,
   } as IPlayground,
   name: "playground",
   reducers: {
     set: (state, action: PayloadAction<IPlaygroundSetPayload>) => {
       // if change is disabled then end action
       if (state.currentMode.isChangeDisabled) {
-        return;
+        return state;
       }
       const newMode = action.payload.mode;
       if (state.currentMode.name !== newMode.name) {
-        state.currentMode = { ...state.currentMode, ...newMode };
+        state.currentMode = newMode;
       }
     },
     setByShortcut: (
@@ -30,19 +27,16 @@ const playgroundSlice = createSlice({
     ) => {
       // if change is disabled then end action
       if (state.currentMode.isChangeDisabled) {
-        return;
+        return state;
       }
       const key = action.payload.key;
       // same mode -> end action
       if (state.currentMode.shortcut === key) {
-        return;
+        return state;
       }
       const newMode = state.modes.find((mode) => mode.shortcut === key);
       if (newMode) {
-        state.currentMode = {
-          ...newMode,
-          isChangeDisabled: state.currentMode.isChangeDisabled,
-        };
+        state.currentMode = newMode;
       }
     },
     changeDisability: (
@@ -50,6 +44,15 @@ const playgroundSlice = createSlice({
       action: PayloadAction<IPlaygroundChangeDisabilityPayload>
     ) => {
       state.currentMode.isChangeDisabled = action.payload.isChangeDisabled;
+    },
+    changeConnectionState: (
+      state,
+      action: PayloadAction<IPlaygroundChangeConnectionStatePayload>
+    ) => {
+      if (state.currentMode.type !== ModeType.connection) {
+        return state;
+      }
+      state.currentMode.connectionState = action.payload.newState;
     },
   },
 });
@@ -64,6 +67,10 @@ export interface IPlaygroundSetByShortcutPayload {
 
 export interface IPlaygroundChangeDisabilityPayload {
   isChangeDisabled: boolean;
+}
+
+export interface IPlaygroundChangeConnectionStatePayload {
+  newState: IConnectionState;
 }
 
 export const {

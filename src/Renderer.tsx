@@ -6,10 +6,12 @@ import Box from "./Box";
 import ConnectionLine from "./ConnectionLine";
 
 import "./controller.css";
+import ConnectionCreator from "./ConnectionCreator";
 
 const Controller: FC = () => {
   const nodes = useAppSelector((state) => state.nodes);
   const connections = useAppSelector((state) => state.connections);
+  const currentMode = useAppSelector((state) => state.playground.currentMode);
   // const scene = useThree((state) => state.scene);
 
   // useEffect(() => {
@@ -20,6 +22,7 @@ const Controller: FC = () => {
 
   return (
     <>
+      {currentMode.type === "connection" && <ConnectionCreator />}
       <group name="nodes_group">
         {nodes.map((node) => (
           <Box

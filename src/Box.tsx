@@ -1,25 +1,23 @@
 import { FC, useRef } from "react";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useSpring, a } from "@react-spring/three";
 import { useDispatch } from "react-redux";
 import { Html } from "@react-three/drei";
 import { useGesture } from "@use-gesture/react";
-
 import {
   Box3,
-  BufferGeometry,
-  Material,
   Mesh,
-  NormalBufferAttributes,
   Object3D,
-  Object3DEventMap,
+  PlaneGeometry,
+  MeshBasicMaterial,
   Vector3,
 } from "three";
+
+import { useAppSelector } from "./app/store";
 
 import { INode, move } from "./features/nodes/nodeSlice";
 
 import "./box.css";
-import { useAppSelector } from "./app/store";
 
 function getBoundaries(group: Object3D, origin: Mesh): Box3[] {
   const objectsBoundaries: Box3[] = [];
@@ -38,18 +36,16 @@ function getBoundaries(group: Object3D, origin: Mesh): Box3[] {
 
 interface IProps {
   node: INode;
-  // position: [number, number, number];
+  /**
+   * rgb color
+   *
+   * @defaultValue `#ffa500`
+   */
+  highlightColor?: string;
 }
 
-const Box: FC<IProps> = ({ node }) => {
-  const meshRef =
-    useRef<
-      Mesh<
-        BufferGeometry<NormalBufferAttributes>,
-        Material | Material[],
-        Object3DEventMap
-      >
-    >(null);
+const Box: FC<IProps> = ({ node, highlightColor = "#ffa500" }) => {
+  const meshRef = useRef<Mesh<PlaneGeometry, MeshBasicMaterial>>(null);
   const htmlRef = useRef<HTMLDivElement>(null);
 
   const { size, viewport } = useThree();
@@ -91,34 +87,13 @@ const Box: FC<IProps> = ({ node }) => {
         const newMouseDiffX = x - currMouseX;
         const newMouseDiffY = y - currMouseY;
         const diffX = newMouseDiffX / aspect;
-        // console.log("🚀 ~ file: Box.jsx:76 ~ Box ~ x:", x);
-        // console.log("🚀 ~ file: Box.jsx:76 ~ Box ~ currMouseX:", currMouseX);
         const diffY = -newMouseDiffY / aspect;
-        // console.log("🚀 ~ file: Box.jsx:79 ~ Box ~ y:", y);
-        // console.log("🚀 ~ file: Box.jsx:78 ~ Box ~ currMouseY:", currMouseY);
 
         const newX = currX + diffX;
-        // console.log("🚀 ~ file: Box.jsx:83 ~ Box ~ currX:", currX);
-        // console.log("🚀 ~ file: Box.jsx:79 ~ Box ~ diffX:", diffX);
-        // console.log("🚀 ~ file: Box.jsx:79 ~ Box ~ newX:", newX);
         const newY = currY + diffY;
-        // console.log("🚀 ~ file: Box.jsx:87 ~ Box ~ currY:", currY);
-        // console.log("🚀 ~ file: Box.jsx:82 ~ Box ~ diffY:", diffY);
-        // console.log("🚀 ~ file: Box.jsx:81 ~ Box ~ tmpY:/", tmpY);
-
-        // const newX = x / aspect;
-        // console.log("🚀 ~ file: Box.jsx:82 ~ Box ~ newX:", newX);
-        // const newY = -y / aspect;
-        // console.log("🚀 ~ file: Box.jsx:84 ~ Box ~ newY:", newY);
-
         // const currX = lastOffset[0] / aspect;
         // const currY = -lastOffset[1] / aspect;
         const meshBoundary = new Box3().setFromObject(meshRef.current);
-
-        // console.log("currX", currX);
-        // console.log("currY", currY);
-        // console.log("newX", newX);
-        // console.log("newY", newY);
 
         const size = new Vector3();
         meshBoundary.getSize(size);
@@ -139,14 +114,8 @@ const Box: FC<IProps> = ({ node }) => {
         );
 
         // const dirVec = new Vector2(newX - currX, newY - currY);
-        // console.log("🚀 ~ file: Box.jsx:126 ~ Box ~ dirVec:", dirVec);
-
         // const oldVector = new Vector3(currX, currY, 0);
-        // console.log("🚀 ~ file: Box.jsx:98 ~ Box ~ oldVector:", oldVector);
         // const newVector = new Vector3(newX, newY, 0);
-        // console.log("🚀 ~ file: Box.jsx:100 ~ Box ~ newVector:", newVector);
-
-        // console.log(dirVec);
 
         const maxX = Math.max(newX, currX);
         const maxY = Math.max(newY, currY);
@@ -156,14 +125,10 @@ const Box: FC<IProps> = ({ node }) => {
         const addX = newX > currX ? 1 : -1;
         const addY = newY > currY ? 1 : -1;
         // const dir3 = newVector.sub(oldVector);
-        // console.log("🚀 ~ file: Box.jsx:99 ~ Box ~ dir3:", dir3);
         // const dir3n = dir3.normalize();
 
         // const ray = new Ray(oldVector, dir3n);
 
-        //   "🚀 ~ file: Box.jsx:107 ~ Box ~ lineGeometry:",
-        //   lineGeometry
-        // );
         const lineBox = new Box3(
           new Vector3(
             addX > 0 ? minX + 2 : minX - size.x / 2,
@@ -176,18 +141,6 @@ const Box: FC<IProps> = ({ node }) => {
             0
           )
         );
-        // const box3Helper = new Box3Helper(lineBox, 0x00ff00);
-        // box3Helper.material.linewidth = 2;
-        // scene.add(box3Helper);
-
-        // console.log("🚀 ~ file: Box.jsx:107 ~ Box ~ lineBox:", lineBox);
-        // console.log(lineBox.getSize(new Vector3()));
-        // console.log(lineBox.getCenter(new Vector3()));
-        // console.log(
-        //   "🚀 ~ file: Box.jsx:118 ~ boundaries.forEach ~ meshBoundary:",
-        //   meshBoundary
-        // );
-
         meshBoundary.set(newMin, newMax);
 
         let blockedX = newX;
@@ -198,53 +151,17 @@ const Box: FC<IProps> = ({ node }) => {
             const res = meshBoundary.intersectsBox(boundary);
             // const rayRes = ray.intersectsBox(boundary);
             const lineRes = lineBox.intersectsBox(boundary);
-            // console.log(
-            //   "🚀 ~ file: Box.jsx:148 ~ boundaries.forEach ~ boundary:",
-            //   boundary
-            // );
-            // console.log(
-            //   "🚀 ~ file: Box.jsx:115 ~ boundaries.forEach ~ rayRes:",
-            //   rayRes
-            // );
 
             if (res || lineRes) {
               // TODO: add diffrent logic depending on res and lineRes
               // thats gonna be ugly
-              console.log(
-                "🚀 ~ file: Box.jsx:212 ~ boundaries.forEach ~ res:",
-                res
-              );
-              console.log(
-                "🚀 ~ file: Box.jsx:216 ~ boundaries.forEach ~ lineRes:",
-                lineRes
-              );
-              console.log("🚀 ~ file: Box.jsx:219 ~ Box ~ currX:", currX);
-              console.log("🚀 ~ file: Box.jsx:220 ~ Box ~ newX:", newX);
-
               const boundaryCenter = new Vector3();
               boundary.getCenter(boundaryCenter);
-
-              console.log(
-                "🚀 ~ file: Box.jsx:226 ~ boundaries.forEach ~ boundary:",
-                boundary
-              );
-              // console.log(
-              //   "🚀 ~ file: Box.jsx:215 ~ boundaries.forEach ~ newX:",
-              //   newX
-              // );
-              // console.log(
-              //   "🚀 `~ file: Box.jsx:218 ~ boundaries.forEach ~ newY:",
-              //   newY
-              // );
 
               const boundaryDir = new Vector3(
                 boundaryCenter.x - (res ? newX : currX),
                 boundaryCenter.y - (res ? newY : currY),
                 0
-              );
-              console.log(
-                "🚀 ~ file: Box.jsx:214 ~ boundaries.forEach ~ boundaryDir:",
-                boundaryDir
               );
 
               // on right wall collision
@@ -255,11 +172,6 @@ const Box: FC<IProps> = ({ node }) => {
               const topMax = boundary.max.y + size.y / 2;
               // on bottom wall collision
               const bottomMax = boundary.min.y - size.y / 2;
-
-              // console.log(
-              //   "🚀 ~ file: Box.jsx:130 ~ boundaries.forEach ~ dirVec:",
-              //   dirVec
-              // );
 
               if (boundaryDir.x === 0 || boundaryDir.y === 0) {
                 blockedX =
@@ -279,35 +191,15 @@ const Box: FC<IProps> = ({ node }) => {
                 const horizontalVec = new Vector3(boundaryDir.x, 0, 0);
                 const verticalVec = new Vector3(0, boundaryDir.y, 0);
                 const horDirDot = boundaryDir.dot(horizontalVec);
-                // console.log(
-                //   "🚀 ~ file: Box.jsx:161 ~ boundaries.forEach ~ horDirDot:",
-                //   horDirDot
-                // );
                 const vertDirDot = boundaryDir.dot(verticalVec);
-                // console.log(
-                //   "🚀 ~ file: Box.jsx:163 ~ boundaries.forEach ~ vertDirDot:",
-                //   vertDirDot
-                // );
 
                 let newVec: Vector3;
 
                 if (horDirDot === vertDirDot) {
-                  // console.log(
-                  //   "🚀 ~ file: Box.jsx:151 ~ boundaries.forEach ~ horDirDot === vertDirDot:",
-                  //   horDirDot === vertDirDot
-                  // );
                   newVec = new Vector3(0, 0, 0);
                 } else if (horDirDot < vertDirDot) {
-                  // console.log(
-                  //   "🚀 ~ file: Box.jsx:153 ~ boundaries.forEach ~ horDirDot < vertDirDot:",
-                  //   horDirDot < vertDirDot
-                  // )
                   newVec = horizontalVec.set(Math.abs(boundaryDir.x), 0, 0);
                 } else {
-                  // console.log(
-                  //   "🚀 ~ file: Box.jsx:156 ~ boundaries.forEach ~ else:",
-                  //   "else"
-                  // );
                   newVec = verticalVec.set(0, Math.abs(boundaryDir.y), 0);
                 }
 
@@ -340,25 +232,8 @@ const Box: FC<IProps> = ({ node }) => {
                 };
 
                 blockedX = getBlockedX();
-                console.log(
-                  "🚀 ~ file: Box.tsx:341 ~ boundaries.forEach ~ blockedX:",
-                  blockedX
-                );
                 blockedY = getBlockedY();
-                // console.log(
-                //   "🚀 ~ file: Box.jsx:182 ~ boundaries.forEach ~ blockedX:",
-                //   blockedX
-                // );
-                // console.log(
-                //   "🚀 ~ file: Box.jsx:184 ~ boundaries.forEach ~ blockedY:",
-                //   blockedY
-                // );
               }
-
-              // blockedAxis = {
-              //   ...blockedAxis,
-              //   ...getBlockedAxis(meshBoundary, boundary, dir),
-              // };
             }
           });
         }
@@ -377,8 +252,6 @@ const Box: FC<IProps> = ({ node }) => {
 
         currMouseX += newMouseDiffX;
         currMouseY += newMouseDiffY;
-        // console.log("blockedX", blockedX);
-        // console.log("blockedY", blockedY);
 
         api.set({ position: new Vector3(blockedX, blockedY, 0) });
       },
@@ -386,8 +259,6 @@ const Box: FC<IProps> = ({ node }) => {
         objectsBoundaries = [];
         // TODO: controls typing
         controls.enabled = true;
-        // const newX = x / aspect;
-        // const newY = -y / aspect;
         dispatch(move({ id: node.id, position: { x: currX, y: currY } }));
       },
     },
@@ -409,6 +280,30 @@ const Box: FC<IProps> = ({ node }) => {
           : true,
     }
   );
+
+  useFrame(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+    const isHiglighted: boolean =
+      meshRef.current.userData.isHiglighted || false;
+
+    const isTriggered: boolean = meshRef.current.userData.isTriggered || false;
+
+    if (isHiglighted && !isTriggered) {
+      mesh.userData = {
+        ...mesh.userData,
+        isTriggered: true,
+        originalColor: "#ff69b4",
+      };
+      mesh.material.color.set(highlightColor);
+    } else if (!isHiglighted && isTriggered) {
+      mesh.userData = {
+        ...mesh.userData,
+        isTriggered: false,
+      };
+      mesh.material.color.set(mesh.userData.originalColor);
+    }
+  });
 
   return (
     <a.mesh
