@@ -5,6 +5,7 @@
    2c. implement unhighlighting intersected objects - done
 3. Pointer Class - done
 4. Connection Edition
-5. Connection Remove
-6. Multiple Connections
-7. Server implementation
+5. Check is ThreejsFiber Provider wrapper exists
+6. Connection Remove
+7. Multiple Connections
+8. Server implementation

@@ -7,9 +7,9 @@ import * as THREE from "three";
 import { useAppDispatch, useAppSelector } from "./app/store";
 import { setModeByShortcut } from "./features/playground/playgroundSlice";
 
-import Controller from "./Controller";
-import Renderer from "./Renderer";
-import Panel from "./Panel";
+import Controller from "./components/Controller/Controller";
+import Renderer from "./components/Renderer";
+import Panel from "./components/Panel/Panel";
 
 extend({ ThreeLine: THREE.Line });
 
@@ -24,6 +24,7 @@ function App() {
   // var viewSize = h;
   // var aspectRatio = w / h;
 
+  // TODO: Is this useEffect required?
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       dispatch(setModeByShortcut({ key: e.key }));

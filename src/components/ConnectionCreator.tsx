@@ -2,14 +2,14 @@ import { FC, useEffect, useRef, useState } from "react";
 import { Line } from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 
-import { useAppDispatch } from "./app/store";
+import { useAppDispatch } from "../app/store";
 
-import { createConnection } from "./features/connection/connectionsSlice";
-import { changeModeDisability } from "./features/playground/playgroundSlice";
+import { createConnection } from "../features/connection/connectionsSlice";
+import { changeModeDisability } from "../features/playground/playgroundSlice";
 
-import ConnectionController from "./features/connection/ConnectionController";
-import Pointer from "./core/Pointer";
-import Highlighter from "./core/Highlighter";
+import ConnectionController from "../features/connection/ConnectionController";
+import Pointer from "../core/Pointer";
+import Highlighter from "../core/Highlighter";
 
 interface IProps {}
 

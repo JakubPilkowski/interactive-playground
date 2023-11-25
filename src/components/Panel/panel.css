@@ -13,3 +13,17 @@
 button {
   padding: 10px 30px;
 }
+
+.mode-button {
+  background-color: lightgray;
+  color: black;
+  width: 100%;
+  outline: none;
+  border: none;
+  border-radius: 10px;
+}
+
+.mode-button.active {
+  border: 1px solid darkorange;
+  color: darkorange;
+}

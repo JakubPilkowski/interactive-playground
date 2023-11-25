@@ -1,12 +1,10 @@
 import { FC, memo } from "react";
 import clsx from "clsx";
 
-import { useAppSelector } from "./app/store";
+import { useAppSelector } from "../../app/store";
 
-import { INode } from "./features/nodes/nodeSlice";
-import { IMode } from "./features/playground/Playground";
-
-import "./controller.css";
+import { INode } from "../../features/nodes/nodeSlice";
+import { IMode } from "../../features/playground/Playground";
 
 import "./panel.css";
 
