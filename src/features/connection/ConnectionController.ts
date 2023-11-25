@@ -98,15 +98,6 @@ export default class ConnectionController {
     return objects[0].object;
   }
 
-  highlightAnchor(anchor: Object3D<Object3DEventMap>): this {
-    const mesh = anchor as Mesh<BufferGeometry, MeshBasicMaterial>;
-    mesh.userData = {
-      originalColor: mesh.material.color,
-    };
-    mesh.material.color.set("#ffa500");
-    return this;
-  }
-
   setSourceAnchor(anchor: Object3D<Object3DEventMap>): this {
     this.unsetSourceAnchor();
     if (this._connection) {
@@ -115,10 +106,6 @@ export default class ConnectionController {
       this._connection = new Connection({ source: anchor.name, target: null });
     }
     this._sourceAnchor = anchor as Mesh<BufferGeometry, MeshBasicMaterial>;
-    // this._sourceAnchor.userData = {
-    //   originalColor: this._sourceAnchor.material.color,
-    // };
-    // this._sourceAnchor.material.color.set("#ffa500");
     return this;
   }
 
@@ -127,14 +114,10 @@ export default class ConnectionController {
     if (this._connection) {
       this._connection.unpinSource();
     }
-    // const baseColor = this._sourceAnchor.userData.originalColor;
-    // this._sourceAnchor.material.color.set(baseColor);
-    // this._sourceAnchor.userData = {};
     this._sourceAnchor = null;
     return this;
   }
 
-  // TODO: add pinTarget
   setTargetAnchor(anchor: Object3D<Object3DEventMap>): this {
     this.unsetTargetAnchor();
     if (this._connection) {
@@ -143,22 +126,14 @@ export default class ConnectionController {
       this._connection = new Connection({ source: null, target: anchor.name });
     }
     this._targetAnchor = anchor as Mesh<BufferGeometry, MeshBasicMaterial>;
-    // this._targetAnchor.userData = {
-    //   originalColor: this._targetAnchor.material.color,
-    // };
-    // this._targetAnchor.material.color.set("#ffa500");
     return this;
   }
 
-  // TODO: add unpinTarget
   unsetTargetAnchor(): this {
     if (!this._targetAnchor) return this;
     if (this._connection) {
       this._connection.unpinTarget();
     }
-    // const baseColor = this._targetAnchor.userData.originalColor;
-    // this._targetAnchor.material.color.set(baseColor);
-    // this._targetAnchor.userData = {};
     this._targetAnchor = null;
     return this;
   }

@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import Connection, { ConnectionState, IConnection } from "./Connection";
+import { ConnectionState, IConnection } from "./Connection";
 
 const initialState: IConnection[] = [
   { id: "0", state: ConnectionState.ACTIVE, source: "0", target: "1" },
@@ -11,7 +11,7 @@ const connectionsSlice = createSlice({
   name: "connections",
   reducers: {
     create: (state, action: PayloadAction<IConnectionCreatePayload>) => {
-      state.push(action.payload.connection.unparse());
+      state.push(action.payload.connection);
     },
     update: (state, action: PayloadAction<IConnectionUpdatePayload>) => {
       const connection = action.payload.connection;
@@ -20,7 +20,7 @@ const connectionsSlice = createSlice({
         (connection) => connection.id === connectionId
       );
       if (index !== -1) {
-        state[index] = connection.unparse();
+        state[index] = connection;
       }
     },
     release: (state, action: PayloadAction<IConnectionReleasePayload>) => {
@@ -30,11 +30,11 @@ const connectionsSlice = createSlice({
 });
 
 export interface IConnectionCreatePayload {
-  connection: Connection;
+  connection: IConnection;
 }
 
 export interface IConnectionUpdatePayload {
-  connection: Connection;
+  connection: IConnection;
 }
 
 export interface IConnectionReleasePayload {

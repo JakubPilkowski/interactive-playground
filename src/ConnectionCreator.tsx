@@ -9,8 +9,11 @@ import { changeModeDisability } from "./features/playground/playgroundSlice";
 
 import ConnectionController from "./features/connection/ConnectionController";
 import Pointer from "./core/Pointer";
+import Highlighter from "./core/Highlighter";
 
 interface IProps {}
+
+const highlighter = new Highlighter();
 
 const ConnectionCreator: FC<IProps> = () => {
   const { size, viewport, scene, camera } = useThree();
@@ -21,25 +24,29 @@ const ConnectionCreator: FC<IProps> = () => {
 
   const dispatch = useAppDispatch();
 
-  const ref = useRef<Line>(null);
+  const lineRef = useRef<Line>(null);
 
   const aspect = size.width / viewport.width;
 
   useFrame((state) => {
     if (controller.state === "idle") return;
-    if (!controller.sourceAnchor) return;
-    if (!ref.current) return;
+    const sourceAnchor = controller.sourceAnchor;
+    if (!sourceAnchor) return;
+    const line = lineRef.current;
+    if (!line) return;
 
     const object = controller.findAnchorObjectByPoint(state.pointer);
     if (object) {
-      controller.highlightAnchor(object);
+      highlighter.highlight(object);
     } else {
-      // controller.
-      // TODO: add object unhiglight
+      const objects = highlighter.highlightObjects.filter(
+        (obj) => obj.name !== sourceAnchor.name
+      );
+      highlighter.unhighlight(...objects);
     }
 
-    ref.current?.geometry.setFromPoints([
-      controller.sourceAnchor.position,
+    line.geometry.setFromPoints([
+      sourceAnchor.position,
       Pointer.toScreenPosition(state.pointer, camera),
     ]);
   });
@@ -47,6 +54,7 @@ const ConnectionCreator: FC<IProps> = () => {
   useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
       if (controller.state === "drag") return;
+      highlighter.clear();
       const pointer = Pointer.fromMousePosition(e.clientX, e.clientY);
 
       const object = controller.findAnchorObjectByPoint(pointer.p);
@@ -55,6 +63,7 @@ const ConnectionCreator: FC<IProps> = () => {
         setController(
           controller.setSourceAnchor(object).setState("drag").clone()
         );
+        highlighter.highlight(object);
         dispatch(changeModeDisability({ isChangeDisabled: true }));
       } else {
         setController(controller.clear().clone());
@@ -72,11 +81,14 @@ const ConnectionCreator: FC<IProps> = () => {
         controller.setTargetAnchor(object);
 
         if (controller.connection) {
-          dispatch(createConnection({ connection: controller.connection }));
+          dispatch(
+            createConnection({ connection: controller.connection.unparse() })
+          );
         }
       }
 
       // clear controller after mouse up
+      highlighter.clear();
       setController(controller.clear().clone());
       dispatch(changeModeDisability({ isChangeDisabled: false }));
     };
@@ -96,7 +108,7 @@ const ConnectionCreator: FC<IProps> = () => {
 
   return (
     // TODO: add anchors
-    <threeLine ref={ref}>
+    <threeLine ref={lineRef}>
       <bufferGeometry />
       <lineBasicMaterial color="orange" linewidth={5} />
     </threeLine>
