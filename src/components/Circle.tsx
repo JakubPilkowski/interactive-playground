@@ -4,7 +4,7 @@ import { ThreeEvent, useFrame } from "@react-three/fiber";
 import { Mesh, CircleGeometry, MeshBasicMaterial, Vector3 } from "three";
 
 // TODO: pulse animation
-const Anchor = forwardRef<AnchorRef, IProps>(
+const Circle = forwardRef<CircleRef, IProps>(
   (
     {
       color = "#faa500",
@@ -15,9 +15,9 @@ const Anchor = forwardRef<AnchorRef, IProps>(
     },
     ref
   ) => {
-    const circleRef = useRef<AnchorRef>(null);
+    const circleRef = useRef<CircleRef>(null);
 
-    useImperativeHandle(ref, () => circleRef.current as AnchorRef);
+    useImperativeHandle(ref, () => circleRef.current as CircleRef);
 
     useFrame(() => {
       const mesh = circleRef.current;
@@ -30,7 +30,7 @@ const Anchor = forwardRef<AnchorRef, IProps>(
         mesh.userData = {
           ...mesh.userData,
           isTriggered: true,
-          originalColor: "#ff69b4",
+          originalColor: color,
         };
         mesh.material.color.set(highlightColor);
       } else if (!isHiglighted && isTriggered) {
@@ -45,8 +45,6 @@ const Anchor = forwardRef<AnchorRef, IProps>(
     return (
       <mesh
         ref={circleRef}
-        //   onPointerEnter={}
-        //   onPointerLeave={}
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         position={position}
@@ -66,6 +64,6 @@ interface IProps {
   position?: Vector3;
 }
 
-export type AnchorRef = Mesh<CircleGeometry, MeshBasicMaterial>;
+export type CircleRef = Mesh<CircleGeometry, MeshBasicMaterial>;
 
-export default Anchor;
+export default Circle;

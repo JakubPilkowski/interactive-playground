@@ -19,15 +19,22 @@ export default class ConnectionController {
   private _targetAnchor: Mesh<BufferGeometry, MeshBasicMaterial> | null;
   private _connection: Connection | null;
   private _state: "drag" | "idle";
+  /**
+   * Whether we are looking for 'source' or 'target'
+   *
+   * @defaultValue `target`
+   */
+  private _destination: ConnectionDestination;
 
   constructor(scene: Scene, camera: Camera, connection: Connection | null) {
     this.camera = camera;
     this.raycaster = new Raycaster();
     this._connection = connection;
     this.scene = scene;
-    this._sourceAnchor = null;
-    this._targetAnchor = null;
+    this._sourceAnchor = this.findAnchorByConnection(connection, "source");
+    this._targetAnchor = this.findAnchorByConnection(connection, "target");
     this._state = "idle";
+    this._destination = "target";
   }
 
   get connection(): Connection | null {
@@ -46,9 +53,50 @@ export default class ConnectionController {
     return this._targetAnchor;
   }
 
+  get destination(): ConnectionDestination {
+    return this._destination;
+  }
+
+  setDestination(destination: ConnectionDestination): this {
+    this._destination = destination;
+    return this;
+  }
+
   setState(state: "drag" | "idle"): this {
     this._state = state;
     return this;
+  }
+
+  setConnection(connection: Connection | null): this {
+    this._connection = connection;
+
+    if (this._connection) {
+      this._sourceAnchor = this.findAnchorByConnection(
+        this._connection,
+        "source"
+      );
+      this._targetAnchor = this.findAnchorByConnection(
+        this._connection,
+        "target"
+      );
+    } else {
+      this._sourceAnchor = null;
+      this._targetAnchor = null;
+    }
+
+    return this;
+  }
+
+  private findAnchorByConnection(
+    connection: Connection | null,
+    destination: ConnectionDestination
+  ): Mesh<BufferGeometry, MeshBasicMaterial> | null {
+    if (!connection) return null;
+    if (!connection[destination]) return null;
+
+    return this.scene.getObjectByName(
+      connection[destination] as string
+    ) as Mesh<BufferGeometry, MeshBasicMaterial> | null;
   }
 
   private getNodes(): Object3D<Object3DEventMap>[] {
@@ -68,8 +116,6 @@ export default class ConnectionController {
 
     return nodes;
   }
-
-  // TODO: add findAnchorType(point, anchorId)
 
   /**
    * @param point normalized pointer position
@@ -138,17 +184,29 @@ export default class ConnectionController {
     return this;
   }
 
+  setAnchorByDestination(anchor: Object3D<Object3DEventMap>): this {
+    if (this._destination === "source") {
+      return this.setSourceAnchor(anchor);
+    }
+    return this.setTargetAnchor(anchor);
+  }
+
+  unsetAnchorByDestination(): this {
+    if (this._destination === "source") {
+      return this.unsetSourceAnchor();
+    }
+    return this.unsetTargetAnchor();
+  }
+
   clear(): this {
-    this._connection = null;
-    this.unsetSourceAnchor();
-    this.unsetTargetAnchor();
+    this.setConnection(null);
     this.setState("idle");
+    this.setDestination("target");
     return this;
   }
 
   clone(): ConnectionController {
-    const { sourceAnchor, targetAnchor, camera, _state, scene, _connection } =
-      this;
+    const { camera, _state, scene, _connection, _destination } = this;
 
     const clone = new ConnectionController(
       scene,
@@ -156,15 +214,18 @@ export default class ConnectionController {
       _connection?.clone() || null
     );
 
-    if (sourceAnchor) {
-      clone.setSourceAnchor(sourceAnchor);
-    }
-    if (targetAnchor) {
-      clone.setTargetAnchor(targetAnchor);
-    }
+    // if (sourceAnchor) {
+    //   clone.setSourceAnchor(sourceAnchor);
+    // }
+    // if (targetAnchor) {
+    //   clone.setTargetAnchor(targetAnchor);
+    // }
 
     clone.setState(_state);
+    clone.setDestination(_destination);
 
     return clone;
   }
 }
+
+export type ConnectionDestination = "source" | "target";

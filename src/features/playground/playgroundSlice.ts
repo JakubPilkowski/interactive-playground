@@ -2,7 +2,13 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { connectionMode, moveMode } from "./modes";
 
-import { IConnectionState, IMode, IPlayground, ModeType } from "./Playground";
+import {
+  IConnectionState,
+  IMode,
+  IModeType,
+  IPlayground,
+  ModeType,
+} from "./Playground";
 
 const playgroundSlice = createSlice({
   initialState: {
@@ -19,6 +25,15 @@ const playgroundSlice = createSlice({
       const newMode = action.payload.mode;
       if (state.currentMode.name !== newMode.name) {
         state.currentMode = newMode;
+      }
+    },
+    setByType: (state, action: PayloadAction<IPlaygroundSetByTypePayload>) => {
+      const index = state.modes.findIndex(
+        (mode) => mode.type === action.payload.type
+      );
+      console.log("🚀 ~ file: playgroundSlice.ts:35 ~ index:", index);
+      if (index !== -1) {
+        state.currentMode = state.modes[index];
       }
     },
     setByShortcut: (
@@ -57,24 +72,29 @@ const playgroundSlice = createSlice({
   },
 });
 
-export interface IPlaygroundSetPayload {
+export type IPlaygroundSetPayload = {
   mode: IMode;
-}
+};
 
-export interface IPlaygroundSetByShortcutPayload {
+export type IPlaygroundSetByTypePayload = {
+  type: IModeType;
+};
+
+export type IPlaygroundSetByShortcutPayload = {
   key: string;
-}
+};
 
-export interface IPlaygroundChangeDisabilityPayload {
+export type IPlaygroundChangeDisabilityPayload = {
   isChangeDisabled: boolean;
-}
+};
 
-export interface IPlaygroundChangeConnectionStatePayload {
+export type IPlaygroundChangeConnectionStatePayload = {
   newState: IConnectionState;
-}
+};
 
 export const {
   set: setMode,
+  setByType: setModeByType,
   setByShortcut: setModeByShortcut,
   changeDisability: changeModeDisability,
 } = playgroundSlice.actions;
