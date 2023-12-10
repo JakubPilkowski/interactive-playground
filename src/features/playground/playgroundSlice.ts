@@ -31,7 +31,6 @@ const playgroundSlice = createSlice({
       const index = state.modes.findIndex(
         (mode) => mode.type === action.payload.type
       );
-      console.log("🚀 ~ file: playgroundSlice.ts:35 ~ index:", index);
       if (index !== -1) {
         state.currentMode = state.modes[index];
       }

@@ -65,21 +65,12 @@ const ConnectionLine: FC<IProps> = ({ connection }) => {
       const line = ref.current;
       if (!line) return;
 
-      console.log("🚀 ~ file: ConnectionLine.tsx:66 ~ controller:", controller);
       const sourceAnchor = controller.sourceAnchor;
       const targetAnchor = controller.targetAnchor;
       const destination = controller.destination;
-      // console.log(
-      //   "🚀 ~ file: ConnectionLine.tsx:72 ~ destination:",
-      //   destination
-      // );
       if (!destination) return;
       const pinnedAnchor =
         destination === "source" ? targetAnchor : sourceAnchor;
-      // console.log(
-      //   "🚀 ~ file: ConnectionLine.tsx:75 ~ pinnedAnchor:",
-      //   pinnedAnchor
-      // );
       if (!pinnedAnchor) return;
       if (!targetAnchor) return;
       if (!sourceAnchor) return;
@@ -89,20 +80,11 @@ const ConnectionLine: FC<IProps> = ({ connection }) => {
           ? startCircleRef.current
           : endCircleRef.current;
 
-      // console.log(
-      //   "🚀 ~ file: ConnectionLine.tsx:88 ~ notPinnedCircle:",
-      //   notPinnedCircle
-      // );
-
       if (!notPinnedCircle) {
         return;
       }
 
       const object = controller.findAnchorObjectByPoint(state.pointer);
-      console.log(
-        "🚀 ~ file: ConnectionLine.tsx:102 ~ pointer:",
-        state.pointer
-      );
       if (object) {
         highlighter.highlight(object);
       } else {
@@ -113,7 +95,6 @@ const ConnectionLine: FC<IProps> = ({ connection }) => {
       }
 
       const vPoint = Pointer.toScreenPosition(state.pointer, camera);
-      console.log("🚀 ~ file: ConnectionLine.tsx:112 ~ vPoint:", vPoint);
 
       notPinnedCircle.position.set(vPoint.x, vPoint.y, vPoint.z);
 
@@ -129,11 +110,6 @@ const ConnectionLine: FC<IProps> = ({ connection }) => {
 
   const handlePointerDown =
     (type: "source" | "target") => (event: ThreeEvent<PointerEvent>) => {
-      console.log("pointer down");
-      console.log(
-        "🚀 ~ file: ConnectionLine.tsx:112 ~ state:",
-        controller.state
-      );
       if (controller.state === "drag") return;
       event.stopPropagation();
       highlighter.clear();
