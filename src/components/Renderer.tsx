@@ -1,14 +1,13 @@
 import { memo, FC } from "react";
 
-import { useAppSelector } from "./app/store";
+import { useAppSelector } from "app/store";
 
 import Box from "./Box";
 import ConnectionLine from "./ConnectionLine";
 
-import "./controller.css";
 import ConnectionCreator from "./ConnectionCreator";
 
-const Controller: FC = () => {
+const Renderer: FC = () => {
   const nodes = useAppSelector((state) => state.nodes);
   const connections = useAppSelector((state) => state.connections);
   const currentMode = useAppSelector((state) => state.playground.currentMode);
@@ -39,4 +38,4 @@ const Controller: FC = () => {
   );
 };
 
-export default memo(Controller);
+export default memo(Renderer);

@@ -3,18 +3,16 @@ import { useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import { Vector3 } from "three";
 
-import { useAppDispatch } from "./app/store";
+import { useAppDispatch } from "../../app/store";
 
-import { add } from "./features/nodes/nodeSlice";
-import { setMode } from "./features/playground/playgroundSlice";
+import { add } from "../../features/nodes/nodeSlice";
+import { setMode } from "../../features/playground/playgroundSlice";
 
 import {
   AddNodeEventHandler,
   MoveToNodeEventHandler,
   SetModeEventHandler,
-} from "./Panel";
-
-import "./controller.css";
+} from "../Panel/Panel";
 
 interface IProps {
   children: (callbacks: {
@@ -49,7 +47,7 @@ const Controller: FC<IProps> = ({ children }) => {
   };
 
   return (
-    <Html prepend wrapperClass="panel">
+    <Html prepend wrapperClass="controller">
       {children({ onAdd, onMove, onModeSet })}
       {/* <button onClick={addButton}>Add new box</button>
       <div>

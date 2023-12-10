@@ -13,9 +13,9 @@ import {
   Vector3,
 } from "three";
 
-import { useAppSelector } from "./app/store";
+import { useAppSelector } from "app/store";
 
-import { INode, move } from "./features/nodes/nodeSlice";
+import { INode, move } from "features/nodes/nodeSlice";
 
 import "./box.css";
 
