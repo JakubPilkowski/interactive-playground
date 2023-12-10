@@ -1,6 +1,7 @@
 import {
   BufferGeometry,
   Camera,
+  Intersection,
   Mesh,
   MeshBasicMaterial,
   Object3D,
@@ -117,11 +118,10 @@ export default class ConnectionController {
     return nodes;
   }
 
-  /**
-   * @param point normalized pointer position
-   * @returns find anchor object using raycaster
-   */
-  findAnchorObjectByPoint(point: Vector2): Object3D<Object3DEventMap> | null {
+  // TODO: Create NodesController class
+  findAnchorIntersectionByPoint(
+    point: Vector2
+  ): Intersection<Object3D<Object3DEventMap>> | null {
     const nodes = this.getNodes();
     if (nodes.length === 0) {
       return null;
@@ -141,7 +141,16 @@ export default class ConnectionController {
       );
     }
 
-    return objects[0].object;
+    return objects[0];
+  }
+
+  /**
+   * @param point normalized pointer position
+   * @returns find anchor object using raycaster
+   */
+  findAnchorObjectByPoint(point: Vector2): Object3D<Object3DEventMap> | null {
+    const result = this.findAnchorIntersectionByPoint(point);
+    return result ? result.object : null;
   }
 
   setSourceAnchor(anchor: Object3D<Object3DEventMap>): this {

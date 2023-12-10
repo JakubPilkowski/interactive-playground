@@ -35,8 +35,23 @@ const ConnectionCreator: FC<IProps> = () => {
     const line = lineRef.current;
     if (!line) return;
 
-    const object = controller.findAnchorObjectByPoint(state.pointer);
+    const intersection = controller.findAnchorIntersectionByPoint(
+      state.pointer
+    );
+
+    const object = intersection?.object;
+
+    // const clientX = looking * aspect;
+    // const state.pointer = (looking * aspect / window.innerWidth) * 2 - 1;
+    // -(looking * aspect / window.innerHeight) * 2 + 1;
+
     if (object) {
+      const x = ((state.pointer.x / 2) * window.innerWidth) / aspect + 1;
+      const y = -((state.pointer.y / 2) * window.innerHeight) / aspect - 1;
+      console.log("state pointer", x, y);
+      console.log("intersection point", intersection?.point);
+      console.log("intersection pointOnLine", intersection?.pointOnLine);
+      console.log("object position", object.position);
       highlighter.highlight(object);
     } else {
       const objects = highlighter.highlightObjects.filter(
@@ -76,7 +91,10 @@ const ConnectionCreator: FC<IProps> = () => {
 
       const pointer = Pointer.fromMousePosition(e.clientX, e.clientY);
 
-      const object = controller.findAnchorObjectByPoint(pointer.p);
+      const intersection = controller.findAnchorIntersectionByPoint(pointer.p);
+
+      const object = intersection?.object;
+
       if (object && object.name !== controller.sourceAnchor.name) {
         controller.setTargetAnchor(object);
 
